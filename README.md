@@ -1,31 +1,42 @@
-# Box Selection System
+# 📦 Box Selection System
 
 A Django-based Box Selection System that recommends the **cheapest shipping box capable of physically fitting all items in an order**.
 
-The application provides a warehouse-friendly web interface, REST API endpoints for box recommendations, and Django Admin for managing products, shipping boxes, and orders.
+The application provides a user-friendly web interface for warehouse operations, REST API endpoints for box recommendations, and Django Admin for managing products, shipping boxes, and orders.
 
-## Features
+## 🚀 Features
 
-- Recommends the cheapest box that can accommodate all items in an order.
-- Supports 3D item rotation to maximize packing efficiency.
-- Checks box weight limits and internal dimensions.
-- Uses a 3D packing algorithm to verify whether items physically fit.
+- Recommends the cheapest shipping box that fits all items in an order.
+- Supports 3D item rotation in all six possible orientations.
+- Validates box weight limits and internal dimensions.
+- Uses a 3D packing algorithm to verify physical item placement.
 - Provides a web-based interface for warehouse operations.
-- Exposes JSON API endpoints for integration with other applications.
+- Offers JSON API endpoints for integration with other applications.
 - Includes Django Admin for managing products, boxes, and orders.
-- Provides detailed rejection reasons when a box cannot accommodate an order.
-- Includes automated tests covering packing logic, API validation, and application functionality.
+- Displays detailed rejection reasons when a box cannot accommodate an order.
+- Includes automated tests for packing logic, API validation, and application functionality.
 
-## Installation and Setup
+## 🛠️ Technologies Used
 
-### 1. Clone the repository
+| Component | Technology |
+|---|---|
+| Backend | Python, Django |
+| Frontend | HTML, CSS, JavaScript |
+| Database | SQLite |
+| API | JSON REST API |
+| Testing | Django Test Framework |
+| Version Control | Git, GitHub |
+
+## 📂 Installation and Setup
+
+### 1. Clone the Repository
 
 ```bash
-git clone <your-github-repository-url>
-cd box_selector_project
+git clone https://github.com/SettipalliVaishnavi/box-selection-system.git
+cd box-selection-system
 ```
 
-### 2. Create a virtual environment
+### 2. Create a Virtual Environment
 
 ```bash
 python -m venv .venv
@@ -34,28 +45,30 @@ python -m venv .venv
 Activate the virtual environment:
 
 **Windows:**
+
 ```bash
 .venv\Scripts\activate
 ```
 
 **Mac/Linux:**
+
 ```bash
 source .venv/bin/activate
 ```
 
-### 3. Install dependencies
+### 3. Install Dependencies
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-### 4. Apply database migrations
+### 4. Apply Database Migrations
 
 ```bash
 python manage.py migrate
 ```
 
-### 5. Load sample data
+### 5. Load Sample Data
 
 ```bash
 python manage.py seed_data
@@ -63,7 +76,13 @@ python manage.py seed_data
 
 This command creates sample products, shipping boxes, and an example order (`ORD-1001`).
 
-### 6. Start the development server
+### 6. Create an Admin Account
+
+```bash
+python manage.py createsuperuser
+```
+
+### 7. Run the Development Server
 
 ```bash
 python manage.py runserver
@@ -74,54 +93,48 @@ Open the application in your browser:
 | URL | Description |
 |---|---|
 | http://127.0.0.1:8000/ | Main application interface |
-| http://127.0.0.1:8000/api/orders/ORD-1001/recommend-box/ | Order-based box recommendation API |
+| http://127.0.0.1:8000/api/orders/ORD-1001/recommend-box/ | Order recommendation API |
 | http://127.0.0.1:8000/admin/ | Django Admin dashboard |
 
-To access Django Admin, first create a superuser:
+## ⚙️ How the Box Selection Algorithm Works
 
-```bash
-python manage.py createsuperuser
-```
+The application follows three main stages to identify the most suitable shipping box.
 
-## Box Selection Algorithm
+### 1. Initial Validation
 
-The application follows a three-stage process to identify the most suitable shipping box.
+Every active shipping box is checked against the following conditions:
 
-### 1. Initial Validation and Rejection
-
-Each active box is checked against the following conditions:
-
-- Total item weight must not exceed the box's maximum weight capacity.
-- Total item volume must not exceed the box's internal volume.
-- Each individual item must fit within the box dimensions.
+- Total item weight must not exceed the maximum box weight.
+- Total item volume must not exceed the internal box volume.
+- Every individual item must fit within the box dimensions.
 - Item dimensions are sorted before comparison to account for rotation.
 
 ### 2. 3D Packing Verification
 
-A greedy 3D packing algorithm verifies whether all items can physically fit inside a box.
+A greedy 3D packing algorithm checks whether all items can physically fit inside a box.
 
 The algorithm:
 
 - Sorts items from largest to smallest.
-- Evaluates six possible orientations for each item.
+- Evaluates all six possible orientations of each item.
 - Uses extreme points to identify possible item placements.
-- Checks box boundaries and overlapping placements.
-- Rejects arrangements that cannot accommodate all items.
+- Checks box boundaries to ensure items remain inside the box.
+- Detects overlapping placements between items.
 
-This approach handles cases where total volume alone cannot guarantee a valid physical arrangement.
+This ensures that the system does not rely only on volume calculations to determine whether items fit.
 
 ### 3. Cheapest Box Selection
 
 After evaluating all active boxes:
 
-- Only boxes that successfully pass the physical packing check are considered.
-- The box with the lowest shipping cost is selected.
-- If multiple boxes have the same cost, the smaller-volume box is preferred.
+- Only boxes that pass the physical packing verification are considered.
+- The box with the lowest cost is selected.
+- If multiple boxes have the same cost, the box with the smaller volume is preferred.
 - If a tie still exists, the box with the lower database ID is selected.
 
-If no available box can accommodate the order, the API returns a response indicating that no suitable single box was found.
+If no box can accommodate all items, the system returns a response indicating that no suitable single box is available.
 
-## API Documentation
+## 🔗 API Documentation
 
 ### 1. Recommend a Box for Items
 
@@ -188,24 +201,24 @@ POST /api/recommend-box/
 GET /api/orders/<reference>/recommend-box/
 ```
 
-Example:
+**Example:**
 
 ```http
 GET /api/orders/ORD-1001/recommend-box/
 ```
 
-This endpoint retrieves an existing order and evaluates the available boxes to recommend the cheapest suitable option.
+This endpoint retrieves an existing order and evaluates available shipping boxes to recommend the cheapest suitable option.
 
 ### API Status Codes
 
 | Status Code | Description |
 |---|---|
 | 200 | Successful recommendation or no suitable box found |
-| 400 | Invalid JSON, missing items, invalid quantity, empty order, or item limit exceeded |
+| 400 | Invalid JSON, empty items, invalid quantity, empty order, or item limit exceeded |
 | 404 | Unknown product SKU or order reference |
 | 405 | Unsupported HTTP method |
 
-## Project Structure
+## 📁 Project Structure
 
 ```text
 box_selector_project/
@@ -236,40 +249,33 @@ box_selector_project/
 │
 ├── requirements.txt
 ├── manage.py
+├── TEST_OUTPUT.md
 └── README.md
 ```
 
-## Technical Details
+## 📏 Measurement Units
 
-| Component | Technology |
-|---|---|
-| Backend | Python, Django |
-| Frontend | HTML, CSS, JavaScript |
-| Database | SQLite |
-| API | JSON-based REST endpoints |
-| Testing | Django Test Framework |
-| Version Control | Git and GitHub |
-
-**Measurement Units:**
 - Dimensions: Centimeters (cm)
 - Weight: Kilograms (kg)
 - Volume: Cubic centimeters (cm³)
-- Box cost: Currency units as configured in the sample data.
+- Box cost: Currency units configured in the application.
 
-## Assumptions and Limitations
+All box dimensions represent internal dimensions.
+
+## ⚠️ Assumptions and Limitations
 
 - Items are treated as rigid 3D cuboids.
 - Items can be rotated freely in all six orientations.
-- Fragility, stacking restrictions, and additional packing materials are not considered.
-- Box weight capacity applies only to the items inside the box.
+- Fragility, stacking restrictions, and packing materials are not considered.
+- The box weight limit applies only to the contents.
 - The packing algorithm uses a heuristic approach because 3D bin packing is an NP-hard problem.
 - Every successful fit is verified using placement boundaries and overlap checks.
-- The heuristic may occasionally reject a valid arrangement, but it does not report an invalid physical placement as a successful fit.
+- The heuristic may occasionally reject an arrangement that a perfect solver could find.
 - Orders requiring multiple boxes are reported as having no suitable single box.
 - Each order is limited to a maximum of 100 items.
 - Only active shipping boxes are considered.
 
-## Configuration
+## 🔐 Configuration
 
 The application uses default settings for local development.
 
@@ -281,9 +287,9 @@ DJANGO_DEBUG=0
 DJANGO_ALLOWED_HOSTS=your-domain.com
 ```
 
-Do not commit sensitive environment variables or secret keys to GitHub.
+Never upload sensitive environment variables or secret keys to GitHub.
 
-## Testing
+## 🧪 Testing
 
 The project includes **41 automated test cases** covering:
 
@@ -292,14 +298,14 @@ The project includes **41 automated test cases** covering:
 - Exact dimension fits.
 - Weight and volume boundaries.
 - Physical packing and collision detection.
-- Cheapest-box selection.
+- Cheapest box selection.
 - Tie-breaking conditions.
 - Maximum item limits.
 - API request validation.
 - HTTP status codes.
 - Home page functionality.
 
-Run the test suite using:
+Run the complete test suite using:
 
 ```bash
 python manage.py test -v 2
@@ -309,7 +315,7 @@ python manage.py test -v 2
 
 Refer to `TEST_OUTPUT.md` for the latest test execution details.
 
-## Continuous Integration
+## 🔄 Continuous Integration
 
 The project includes a GitHub Actions workflow:
 
@@ -317,18 +323,25 @@ The project includes a GitHub Actions workflow:
 .github/workflows/tests.yml
 ```
 
-This workflow runs automated tests to help verify application functionality during development and code changes.
+This workflow automatically runs the test suite to verify application functionality during development and code changes.
 
-## Future Enhancements
+## 🔮 Future Enhancements
 
 - Support multiple-box recommendations for large orders.
-- Introduce advanced 3D packing optimization algorithms.
-- Include packaging material and shipping constraints.
+- Implement advanced 3D packing optimization algorithms.
+- Include packaging materials and additional shipping constraints.
 - Add visual 3D representations of box arrangements.
 - Improve packing efficiency for complex orders.
 
-## Conclusion
+## 🎯 Conclusion
 
 The Box Selection System simplifies shipping box selection by combining weight validation, volume checks, and 3D physical packing verification.
 
-It helps warehouse teams identify the **most cost-effective box that can safely accommodate an entire order**, reducing unnecessary packaging costs and improving shipping efficiency.
+It helps warehouse teams identify the **most cost-effective shipping box that can safely accommodate an entire order**, reducing unnecessary packaging costs and improving shipping efficiency.
+
+## 👩‍💻 Author
+
+**Vaishnavi Settipalli**
+
+- GitHub: [SettipalliVaishnavi](https://github.com/SettipalliVaishnavi)
+
