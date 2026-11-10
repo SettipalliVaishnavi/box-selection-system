@@ -1,2 +1,4 @@
 Django>=5.0,<7.0
 gunicorn
+dj-database-url
+psycopg[binary]
