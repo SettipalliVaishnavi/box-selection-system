@@ -5,4 +5,4 @@ version = "1.0.0"
 requires-python = ">=3.12"
 
 [tool.vercel.scripts]
-build = "python manage.py migrate && python manage.py collectstatic --noinput"
+build = "python manage.py migrate && python manage.py seed_data && python manage.py collectstatic --noinput"
