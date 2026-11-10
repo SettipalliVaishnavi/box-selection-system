@@ -1,0 +1,63 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Box Selector</title>
+  <link rel="stylesheet" href="{% static 'boxes/style.css' %}">
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <h1>My Box Finder</h1>
+    <p class="sub">Pick the items in an order. We recommend the cheapest box that fits them all.</p>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Order items</h2>
+      {% for p in products %}
+      <div class="row" data-sku="{{ p.sku }}">
+        <div>
+          <div class="name">{{ p.name }}</div>
+          <div class="meta">{{ p.sku }} · {{ p.length|floatformat:"-2" }} × {{ p.width|floatformat:"-2" }} × {{ p.height|floatformat:"-2" }} cm · {{ p.weight|floatformat:"-3" }} kg</div>
+        </div>
+        <div class="qty">
+          <button type="button" data-step="-1" aria-label="Decrease {{ p.name }}">−</button>
+          <input type="number" min="0" max="100" value="0" inputmode="numeric" aria-label="Quantity of {{ p.name }}">
+          <button type="button" data-step="1" aria-label="Increase {{ p.name }}">+</button>
+        </div>
+      </div>
+      {% empty %}
+      <p class="empty">No products yet. Run <code>python manage.py seed_data</code> or add some in the <a href="/admin/">admin</a>.</p>
+      {% endfor %}
+      <button class="go" id="go" type="button" disabled>Recommend box</button>
+      <button class="clear" id="clear" type="button">Clear order</button>
+    </section>
+
+    <section class="card">
+      <h2>Available boxes</h2>
+      <table>
+        <thead><tr><th>Box</th><th>Inside (cm)</th><th>Max kg</th><th>Cost</th></tr></thead>
+        <tbody>
+        {% for b in boxes %}
+          <tr>
+            <td>{{ b.name }}</td>
+            <td>{{ b.length|floatformat:"-2" }} × {{ b.width|floatformat:"-2" }} × {{ b.height|floatformat:"-2" }}</td>
+            <td>{{ b.max_weight|floatformat:"-3" }}</td>
+            <td>{{ b.cost }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="empty">No active boxes.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <p class="meta note">Manage products, boxes and orders in the <a href="/admin/">admin</a>.</p>
+    </section>
+  </div>
+
+  <section id="result" aria-live="polite"></section>
+</main>
+<script src="{% static 'boxes/app.js' %}"></script>
+</body>
+</html>
